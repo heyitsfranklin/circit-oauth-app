@@ -42,14 +42,13 @@ namespace Tests
         [Fact]
         public async Task ShouldStartListenerAndGetCode()
         {
-            var httpClient = new HttpClient();
             var myCode = "123456789";
-            var facebookService = new FacebookService(httpClient, AppSettings);
+            var facebookService = new FacebookService(new HttpClient(), AppSettings);
             string result = null;
 
             _ = Task.Run(async () => result = await facebookService.ListenForCallback().ConfigureAwait(false));
 
-            await httpClient.GetAsync($"http://localhost:{AppSettings.FacebookCallbackPort}/{ AppSettings.FacebookCallbackEndpoint }?code={myCode}");
+            await new HttpClient().GetAsync($"http://localhost:{AppSettings.FacebookCallbackPort}/{ AppSettings.FacebookCallbackEndpoint }?code={myCode}");
             Assert.Equal(myCode, result);
         }
 
