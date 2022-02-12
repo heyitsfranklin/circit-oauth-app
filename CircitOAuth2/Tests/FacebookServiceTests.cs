@@ -40,7 +40,7 @@ namespace Tests
         }
 
         [Fact]
-        public async Task ShouldStartListenerAndGetCodeAsync()
+        public async Task ShouldStartListenerAndGetCode()
         {
             var httpClient = new HttpClient();
             var myCode = "123456789";
