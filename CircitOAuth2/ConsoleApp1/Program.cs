@@ -13,7 +13,7 @@ namespace ConsoleApp1
     internal class Program
     {
         private static AppSettings AppSettings;
-        private static IFacebookService FacebookLoginService;
+        private static IFacebookService FacebookService;
 
         static async Task Main(string[] args)
         {
@@ -27,8 +27,8 @@ namespace ConsoleApp1
             string code = null;
             for (int i =0; i < 3 && string.IsNullOrEmpty(code); i++)
             {
-                WebBrowserHelper.LaunchUrl(FacebookLoginService.GetLoginUrl());
-                code = await FacebookLoginService.ListenForCallback().ConfigureAwait(false);
+                WebBrowserHelper.LaunchUrl(FacebookService.GetLoginUrl());
+                code = await FacebookService.ListenForCallback().ConfigureAwait(false);
                 if (code == null && i != 2)
                     Console.WriteLine($"It appears an error occurred during login or the login was cancelled. Please try again ({ 3 - (i+1)} attempt(s) remaining).");
             }
@@ -42,11 +42,11 @@ namespace ConsoleApp1
             Console.WriteLine("√ Login successful" + Environment.NewLine);
 
             Console.WriteLine("Getting access token...");
-            var token = await FacebookLoginService.GetAccessToken(code).ConfigureAwait(false);
+            var token = await FacebookService.GetAccessToken(code).ConfigureAwait(false);
             Console.WriteLine("√ Received access token" + Environment.NewLine);
 
             Console.WriteLine("Validating access token...");
-            var tokenInfo = await FacebookLoginService.GetTokenInfo(token.AccessToken).ConfigureAwait(false);
+            var tokenInfo = await FacebookService.GetTokenInfo(token.AccessToken).ConfigureAwait(false);
             if (!tokenInfo.Data.ApplicationId.Equals(AppSettings.FacebookClientId))
             {
                 Console.WriteLine("Token invalid. Exiting now.");
@@ -56,7 +56,7 @@ namespace ConsoleApp1
             Console.WriteLine("√ Access token validated successfully" + Environment.NewLine);
 
             Console.WriteLine("Fetching user info...");
-            var userInfo = await FacebookLoginService.GetUser(tokenInfo.Data.UserId, token.AccessToken).ConfigureAwait(false);
+            var userInfo = await FacebookService.GetUser(tokenInfo.Data.UserId, token.AccessToken).ConfigureAwait(false);
             Console.WriteLine($"User Id: { userInfo.Id }");
             Console.WriteLine($"First name: { userInfo.FirstName }");
             Console.WriteLine($"Last name: { userInfo.LastName }");
@@ -93,7 +93,7 @@ namespace ConsoleApp1
                 });
 
             IServiceProvider serviceProvider = serviceCollection.BuildServiceProvider();
-            FacebookLoginService = serviceProvider.GetService<IFacebookService>();
+            FacebookService = serviceProvider.GetService<IFacebookService>();
         }
     }
 }
