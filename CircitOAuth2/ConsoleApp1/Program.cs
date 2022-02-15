@@ -29,7 +29,7 @@ namespace ConsoleApp1
             {
                 WebBrowserHelper.LaunchUrl(FacebookService.GetLoginUrl());
                 code = await FacebookService.ListenForCallback().ConfigureAwait(false);
-                if (code == null && i != 2)
+                if (string.IsNullOrEmpty(code) && i != 2)
                     Console.WriteLine($"It appears an error occurred during login or the login was cancelled. Please try again ({ 3 - (i+1)} attempt(s) remaining).");
             }
 
